@@ -8,10 +8,10 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
-
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".mvp.ui.activities.NewsActivity">
 
         <android.support.design.widget.AppBarLayout
             android:layout_width="match_parent"
@@ -21,38 +21,15 @@
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="?attr/colorPrimary"
+                android:layout_height="wrap_content"
+                android:fitsSystemWindows="true"
+                android:background="@color/colorPrimary"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
-                app:title="新闻" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <android.support.design.widget.TabLayout
-                    android:id="@+id/tabs"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1">
-                </android.support.design.widget.TabLayout>
-
-                <ImageView
-                    android:id="@+id/add_channel_iv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:foreground="?android:attr/selectableItemBackground"
-                    android:maxHeight="?attr/actionBarSize"
-                    android:padding="@dimen/item_margin"
-                    android:src="@mipmap/ic_add"/>
-            </LinearLayout>
-
+                app:title="图片"/>
         </android.support.design.widget.AppBarLayout>
 
-        <include layout="@layout/content_main" />
+        <include layout="@layout/content_photo"/>
     </android.support.design.widget.CoordinatorLayout>
 
     <android.support.design.widget.NavigationView
