@@ -1,4 +1,4 @@
-package cn.com.microcent.news;
+package cn.com.microcent.news.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +12,12 @@ import android.view.ViewGroup;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.com.microcent.news.R;
+import cn.com.microcent.news.ui.adapter.NewsAdapter;
+
+/**
+ * Created by Administrator on 2018/1/24.
+ */
 
 public class NewsFragment extends Fragment {
 

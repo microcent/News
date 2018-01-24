@@ -1,0 +1,13 @@
+ext {
+    android = [
+            compileSdkVersion : 25,
+            buildToolsVersion : "26.0.2",
+            applicationId     : "cn.com.microcent.news",
+            minSdkVersion     : 19,
+            targetSdkVersion  : 25,
+            versionCode       : 1,
+            versionName       : "1.0.0",
+            androidJUnitRunner: "android.support.test.runner.AndroidJUnitRunner",
+            javaVersion       : JavaVersion.VERSION_1_8
+    ]
+}

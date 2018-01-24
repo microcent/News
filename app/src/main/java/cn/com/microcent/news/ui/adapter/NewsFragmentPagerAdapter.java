@@ -1,4 +1,4 @@
-package cn.com.microcent.news;
+package cn.com.microcent.news.ui.adapter;
 
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;

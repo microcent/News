@@ -1,22 +1,142 @@
 apply plugin: 'com.android.application'
+apply plugin: 'com.jakewharton.butterknife'
+apply plugin: 'org.greenrobot.greendao'
+apply plugin: 'me.tatarka.retrolambda'
+
+def releaseTime() {
+    return new Date().format("yyyyMMdd", TimeZone.getTimeZone("UTC"))
+}
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "26.0.2"
+    //编译的SDK版本
+    compileSdkVersion rootProject.ext.android.compileSdkVersion
+    //编译的Tools版本
+    buildToolsVersion rootProject.ext.android.buildToolsVersion
+    //默认配置
     defaultConfig {
-        applicationId "cn.com.microcent.news"
-        minSdkVersion 15
-        targetSdkVersion 25
-        versionCode 1
-        versionName "1.0"
-        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+        //应用程序的包名
+        applicationId rootProject.ext.android.applicationId
+        //支持的最低版本
+        minSdkVersion rootProject.ext.android.minSdkVersion
+        //支持的目标版本
+        targetSdkVersion rootProject.ext.android.targetSdkVersion
+        //版本号
+        versionCode rootProject.ext.android.versionCode
+        //版本名
+        versionName rootProject.ext.android.versionName
+        //测试引擎
+        testInstrumentationRunner rootProject.ext.android.androidJUnitRunner
+
+        //65535问题 0xffff是否开启分包dex
+        multiDexEnabled true
     }
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+    //编译配置
+    compileOptions {
+        // java版本
+        sourceCompatibility rootProject.ext.android.javaVersion
+        targetCompatibility rootProject.ext.android.javaVersion
+        incremental false
+    }
+    //签名配置
+    signingConfigs {
+        //开发版本签名配置
+        dev {
+            //签名文件的路径
+            storeFile file("${rootDir}/keystore/dev.keystore")
+            //签名文件密码
+            storePassword "123456"
+            //别名
+            keyAlias "devkey"
+            //key的密码
+            keyPassword "123456"
+        }
+        //本地版本签名配置
+        local {
+            //签名文件的路径
+            storeFile file("${rootDir}/keystore/local.keystore")
+            //签名文件密码
+            storePassword "123456"
+            //别名
+            keyAlias "localkey"
+            //key的密码
+            keyPassword "123456"
         }
     }
+    //编译类型配置
+    buildTypes {
+        //开发版本
+        dev {
+            //是否输出日志
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            //url动态替换
+            buildConfigField "String", "API_HOST", "\"http://192.168.0.141:8080/fep/\""
+            // 为版本名添加后缀
+            versionNameSuffix "-dev"
+            //zip align(对齐，排列)优化
+            zipAlignEnabled false
+            //去除没有用到的资源文件，要求minifyEnabled为true才生效
+            shrinkResources false
+            //是否进行混淆
+            minifyEnabled false
+            //签名
+            signingConfig signingConfigs.dev
+            // 更改输出dev/local/staging/production版的名称
+            // app_v[版本号]_[编译日期]_[production/staging].apk，例如：app_v1.0.0_2017-01-09_staging.apk
+            applicationVariants.all { variant ->
+                if (variant.buildType.name.equals('dev')) {
+                    variant.outputs.each { output ->
+                        def outputFile = output.outputFile
+                        if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                            def fileName = "app_v${defaultConfig.versionName}_${releaseTime()}-dev.apk"
+                            output.outputFile = new File(outputFile.parent, fileName)
+                        }
+                    }
+                }
+            }
+        }
+        //本地版本
+        local {
+            //是否输出日志
+            buildConfigField "boolean", "LOG_DEBUG", "true"
+            //url动态替换
+            buildConfigField "String", "API_HOST", "\"http://192.168.3.27:8080/fep/\""
+            // 为版本名添加后缀
+            versionNameSuffix "-local"
+            //zip align(对齐，排列)优化
+            zipAlignEnabled false
+            // 去除没有用到的资源文件，要求minifyEnabled为true才生效
+            shrinkResources false
+            //是否进行混淆
+            minifyEnabled false
+            //签名
+            signingConfig signingConfigs.local
+            // 更改输出dev/local/staging/production版的名称
+            // app_v[版本号]_[编译日期]_[production/staging].apk，例如：app_v1.0.0_2017-01-09_staging.apk
+            applicationVariants.all { variant ->
+                if (variant.buildType.name.equals('local')) {
+                    variant.outputs.each { output ->
+                        def outputFile = output.outputFile
+                        if (outputFile != null && outputFile.name.endsWith('.apk')) {
+                            def fileName = "app_v${defaultConfig.versionName}_${releaseTime()}-local.apk"
+                            output.outputFile = new File(outputFile.parent, fileName)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    //打包配置
+    packagingOptions {
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/services/javax.annotation.processing.Processor'
+    }
+}
+
+greendao {
+    schemaVersion 1
+    daoPackage 'cn.com.microcent.news.data.local.db.gen'
+    targetGenDir 'src/main/java'
 }
 
 dependencies {
@@ -24,12 +144,55 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:support-v4:25.3.1'
     compile 'com.android.support:cardview-v7:25.3.1'
     compile 'com.android.support:recyclerview-v7:25.3.1'
+
+    //greendao 数据库
+    compile 'org.greenrobot:greendao:3.2.2'
+
+    // greendao 数据库加密类
+    compile 'net.zetetic:android-database-sqlcipher:3.5.6'
+
+    //greendao 数据库升级帮助类
+    compile 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v2.0.1'
+
+    //Butterknife 注解
+    compile 'com.jakewharton:butterknife:8.8.1'
+    annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
+
+    //Dagger2 注解
+    compile 'com.google.dagger:dagger:2.12'
+    annotationProcessor 'com.google.dagger:dagger-compiler:2.12'
+
+    //Java 注解
+    provided 'org.glassfish:javax.annotation:10.0-b28'
+
+    provided 'org.projectlombok:lombok:1.16.18'
+
+    //RxAndroid 和 RxJava
+    compile 'io.reactivex.rxjava2:rxjava:2.1.8'
+    compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    //处理rxjava内存泄漏-生命周期绑定
+    compile 'com.trello.rxlifecycle2:rxlifecycle:2.1.0'
+    compile 'com.trello.rxlifecycle2:rxlifecycle-components:2.1.0'
+
+    //Retrofit 网络请求
+    compile 'com.squareup.retrofit2:retrofit:2.3.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.3.0'
+    compile 'com.squareup.retrofit2:converter-scalars:2.3.0'
+    compile 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
+
+    //Gson 数据解析
+    compile 'com.google.code.gson:gson:2.8.1'
+
+    // OkHttp 日志拦截
+    compile 'com.squareup.okhttp3:logging-interceptor:3.9.0'
+
+    compile 'com.android.support:multidex:1.0.0'
 
     testCompile 'junit:junit:4.12'
 }

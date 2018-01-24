@@ -1,8 +1,10 @@
-package cn.com.microcent.news;
+package cn.com.microcent.news.ui.activity;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import cn.com.microcent.news.R;
 
 public class SplashActivity extends AppCompatActivity {
 

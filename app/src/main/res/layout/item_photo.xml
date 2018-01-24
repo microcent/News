@@ -6,7 +6,7 @@
              android:layout_margin="2dp"
              android:foreground="?android:attr/selectableItemBackground">
 
-    <cn.com.microcent.news.RatioImageView
+    <cn.com.microcent.news.ui.widget.RatioImageView
         android:id="@+id/photo_iv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

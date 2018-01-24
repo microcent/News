@@ -1,4 +1,4 @@
-package cn.com.microcent.news;
+package cn.com.microcent.news.ui.adapter;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -15,6 +15,8 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+
+import cn.com.microcent.news.R;
 
 /**
  * Created by Administrator on 2018/1/24.

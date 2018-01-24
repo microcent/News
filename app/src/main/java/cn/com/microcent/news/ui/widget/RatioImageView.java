@@ -14,12 +14,25 @@
  * limitations under the License.
  *
  */
-package cn.com.microcent.news;
+package cn.com.microcent.news.ui.widget;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.AppCompatImageView;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.widget.ImageView;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import cn.com.microcent.news.R;
+import cn.com.microcent.news.ui.adapter.NewsAdapter;
 
 public class RatioImageView extends AppCompatImageView {
 
@@ -60,4 +73,5 @@ public class RatioImageView extends AppCompatImageView {
             super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         }
     }
+
 }

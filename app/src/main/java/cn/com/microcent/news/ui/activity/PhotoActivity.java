@@ -1,4 +1,4 @@
-package cn.com.microcent.news;
+package cn.com.microcent.news.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +19,9 @@ import android.view.View;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import cn.com.microcent.news.R;
+import cn.com.microcent.news.ui.adapter.PhotoAdapter;
 
 public class PhotoActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
