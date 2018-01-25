@@ -1,6 +1,9 @@
 package cn.com.microcent.news.app;
 
+import android.content.Context;
 import android.support.multidex.MultiDexApplication;
+
+import com.blankj.utilcode.util.Utils;
 
 import cn.com.microcent.news.di.component.AppComponent;
 import cn.com.microcent.news.di.component.DaggerAppComponent;
@@ -27,7 +30,7 @@ import cn.com.microcent.news.di.module.AppModule;
  * 　　　　　┗┻┛　┗┻┛
  * ━━━━━━感觉萌萌哒━━━━━━
  */
-public class App  extends MultiDexApplication {
+public class App extends MultiDexApplication {
 
     private AppComponent appComponent;
 
@@ -37,12 +40,12 @@ public class App  extends MultiDexApplication {
         return instance;
     }
 
-
     @Override
     public void onCreate() {
         super.onCreate();
         initDagger2();
         instance = this;
+        Utils.init(this);
     }
 
     /**

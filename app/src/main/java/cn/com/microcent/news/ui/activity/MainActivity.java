@@ -2,43 +2,63 @@ package cn.com.microcent.news.ui.activity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.view.ViewPager;
-import android.view.View;
-import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import cn.com.microcent.news.Channel;
 import cn.com.microcent.news.R;
 import cn.com.microcent.news.ui.adapter.NewsFragmentPagerAdapter;
+import cn.com.microcent.news.ui.base.BaseActivity;
+import cn.com.microcent.news.ui.contract.MainContract;
 import cn.com.microcent.news.ui.fragment.NewsFragment;
+import cn.com.microcent.news.ui.presenter.MainPresenter;
 
-public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class MainActivity extends BaseActivity<MainPresenter> implements MainContract.View {
 
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
+    @BindView(R.id.view_pager)
     ViewPager viewPager;
-    TabLayout mTabs;
+    @BindView(R.id.tabs)
+    TabLayout tabs;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+    protected int getLayout() {
+        return R.layout.activity_main;
+    }
+
+    @Override
+    protected void setInject() {
+        getActivityComponent().inject(this);
+    }
+
+    @Override
+    protected void initView() {
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -47,38 +67,58 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
 
-        viewPager = (ViewPager) findViewById(R.id.view_pager);
-        mTabs = (TabLayout) findViewById(R.id.tabs);
+                if (id == R.id.nav_news) {
+                    startActivity(new Intent(MainActivity.this, MainActivity.class));
+                    overridePendingTransition(0, 0);
+                } else if (id == R.id.nav_photo) {
+                    startActivity(new Intent(MainActivity.this, PhotoActivity.class));
+                    overridePendingTransition(0, 0);
+                } else if (id == R.id.nav_video) {
+                    Toast.makeText(MainActivity.this, "施工准备中...", Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.nav_night_mode) {
+
+                }
+
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
+
         initViewPager();
     }
 
+    @Override
+    protected void initData() {
+
+    }
+
     private void initViewPager() {
+        List<Channel> channels = new ArrayList<>();
+        channels.add(new Channel(1, "Sport", 0));
+        channels.add(new Channel(2, "News", 1));
         List<String> channelNames = new ArrayList<>();
-        channelNames.add("Test");
-        channelNames.add("Sport");
         List<Fragment> fragments = new ArrayList<>();
-        NewsFragment fragment = new NewsFragment();
-        Bundle bundle = new Bundle();
-        bundle.putInt("CHANNEL_POSITION", 0);
-        fragment.setArguments(bundle);
-        fragments.add(fragment);
-        NewsFragment fragment2 = new NewsFragment();
-        Bundle bundle2 = new Bundle();
-        bundle2.putInt("CHANNEL_POSITION", 1);
-        fragment2.setArguments(bundle2);
-        fragments.add(fragment2);
+        channels.forEach(m->{
+            channelNames.add(m.getChannelName());
+            NewsFragment fragment = new NewsFragment();
+            Bundle bundle = new Bundle();
+            bundle.putInt("CHANNEL_POSITION", 0);
+            fragment.setArguments(bundle);
+            fragments.add(fragment);
+        });
         NewsFragmentPagerAdapter pagerAdapter = new NewsFragmentPagerAdapter(getSupportFragmentManager(), channelNames, fragments);
         viewPager.setAdapter(pagerAdapter);
-        mTabs.setupWithViewPager(viewPager);
+        tabs.setupWithViewPager(viewPager);
         viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -99,7 +139,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -131,26 +170,4 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_news) {
-            startActivity(new Intent(this, MainActivity.class));
-            overridePendingTransition(0, 0);
-        } else if (id == R.id.nav_photo) {
-            startActivity(new Intent(this, PhotoActivity.class));
-            overridePendingTransition(0, 0);
-        } else if (id == R.id.nav_video) {
-            Toast.makeText(this, "施工准备中...", Toast.LENGTH_SHORT).show();
-        } else if (id == R.id.nav_night_mode) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 }

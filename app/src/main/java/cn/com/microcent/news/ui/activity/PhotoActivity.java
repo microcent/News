@@ -1,14 +1,13 @@
 package cn.com.microcent.news.ui.activity;
 
 import android.content.Intent;
-import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
@@ -20,22 +19,44 @@ import android.view.View;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import butterknife.BindView;
 import cn.com.microcent.news.R;
 import cn.com.microcent.news.ui.adapter.PhotoAdapter;
+import cn.com.microcent.news.ui.base.BaseActivity;
+import cn.com.microcent.news.ui.contract.PhotoContract;
+import cn.com.microcent.news.ui.presenter.PhotoPresenter;
 
-public class PhotoActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class PhotoActivity extends BaseActivity<PhotoPresenter> implements PhotoContract.View {
 
-    RecyclerView mPhotoRv;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
+    @BindView(R.id.rv_photo)
+    RecyclerView rvPhoto;
+
+    @Inject
+    PhotoAdapter photoAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_photo);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    protected int getLayout() {
+        return R.layout.activity_photo;
+    }
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+    @Override
+    protected void setInject() {
+        getActivityComponent().inject(this);
+    }
+
+    @Override
+    protected void initView() {
+        setSupportActionBar(toolbar);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -44,29 +65,53 @@ public class PhotoActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
 
-        mPhotoRv = (RecyclerView) findViewById(R.id.photo_rv);
-        mPhotoRv.setHasFixedSize(true);
-        mPhotoRv.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
-        mPhotoRv.setItemAnimator(new DefaultItemAnimator());
-        List<String> list=new ArrayList<>();
-        list.add("http://www.pdsxww.com/images/attachement/jpg/site2/20160620/c03fd570564318d1e31506.jpg");
-        list.add("http://www.pdsxww.com/images/attachement/jpg/site2/20160620/c03fd570564318d1e33b0b.jpg");
-        list.add("http://www.pdsxww.com/images/attachement/jpg/site2/20160620/c03fd570564318d1e37315.jpg");
-        mPhotoRv.setAdapter(new PhotoAdapter(list));
+                if (id == R.id.nav_news) {
+                    startActivity(new Intent(PhotoActivity.this, MainActivity.class));
+                    overridePendingTransition(0, 0);
+                } else if (id == R.id.nav_photo) {
+                    startActivity(new Intent(PhotoActivity.this, PhotoActivity.class));
+                    overridePendingTransition(0, 0);
+                } else if (id == R.id.nav_video) {
+
+                } else if (id == R.id.nav_night_mode) {
+
+                }
+
+                drawer.closeDrawer(GravityCompat.START);
+                return true;
+            }
+        });
+
+        rvPhoto.setHasFixedSize(true);
+        rvPhoto.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
+        rvPhoto.setItemAnimator(new DefaultItemAnimator());
+
+        rvPhoto.setAdapter(photoAdapter);
+    }
+
+    @Override
+    protected void initData() {
+        mPresenter.load();
+    }
+
+    @Override
+    public void loadSuccess(List<String> list) {
+        photoAdapter.setList(list);
+        photoAdapter.notifyDataSetChanged();
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -96,28 +141,5 @@ public class PhotoActivity extends AppCompatActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @SuppressWarnings("StatementWithEmptyBody")
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
-
-        if (id == R.id.nav_news) {
-            startActivity(new Intent(this, MainActivity.class));
-            overridePendingTransition(0, 0);
-        } else if (id == R.id.nav_photo) {
-            startActivity(new Intent(this, PhotoActivity.class));
-            overridePendingTransition(0, 0);
-        } else if (id == R.id.nav_video) {
-
-        } else if (id == R.id.nav_night_mode) {
-
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
-        return true;
     }
 }

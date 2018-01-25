@@ -5,16 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import javax.inject.Inject;
 
-import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import butterknife.Unbinder;
-import cn.com.microcent.news.R;
 import cn.com.microcent.news.app.App;
 import cn.com.microcent.news.di.component.ActivityComponent;
 import cn.com.microcent.news.di.component.DaggerActivityComponent;
@@ -30,9 +25,6 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
     protected Context mContext;
 
     private Unbinder mUnbinder;
-
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
 
     @Inject
     protected P mPresenter;
@@ -54,13 +46,6 @@ public abstract class BaseActivity<P extends IPresenter> extends AppCompatActivi
         initView();
         initData();
 //        AppManager.getAppManager().addActivity(this);
-        setSupportActionBar(toolbar);
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
     }
 
     @Override

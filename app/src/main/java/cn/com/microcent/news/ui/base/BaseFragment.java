@@ -45,11 +45,13 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         if (mView == null) {
-            mView = inflater.inflate(getLayout(), null);
+            mView = inflater.inflate(getLayout(), container, false);
             //绑定到butterknife
             mUnbinder = ButterKnife.bind(this, mView);
             setInject();
-            initView(inflater);
+            if (mPresenter != null)
+                mPresenter.attachView(this);
+            initView(mView);
         }
         ViewGroup parent = (ViewGroup) mView.getParent();
         if (parent != null) {
@@ -83,7 +85,7 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
 
     protected abstract void setInject();
 
-    protected abstract void initView(LayoutInflater inflater);
+    protected abstract void initView(View view);
 
     public FragmentComponent getFragmentComponent() {
         return DaggerFragmentComponent.builder()
