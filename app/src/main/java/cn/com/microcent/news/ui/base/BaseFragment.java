@@ -29,7 +29,7 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
 
     @Inject
     protected P mPresenter;
-    private Unbinder mUnbinder;
+    private Unbinder unbinder;
 
     @Override
     public void onAttach(Context mContext) {
@@ -41,46 +41,56 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
         }
     }
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setInject();
+    }
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        if (mView == null) {
+//        if (mView == null) {
             mView = inflater.inflate(getLayout(), container, false);
             //绑定到butterknife
-            mUnbinder = ButterKnife.bind(this, mView);
-            setInject();
+            unbinder = ButterKnife.bind(this, mView);
+
             if (mPresenter != null)
                 mPresenter.attachView(this);
             initView(mView);
             initData();
-        }
-        ViewGroup parent = (ViewGroup) mView.getParent();
-        if (parent != null) {
-            parent.removeView(mView);
-        }
+//        }
+//        ViewGroup parent = (ViewGroup) mView.getParent();
+//        if (parent != null) {
+//            parent.removeView(mView);
+//        }
         return mView;
     }
 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        if (mPresenter != null) mPresenter.attachView(this);
+        if (mPresenter != null) {
+            mPresenter.attachView(this);
+        }
     }
 
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if (mUnbinder != Unbinder.EMPTY) mUnbinder.unbind();
-        this.mUnbinder = null;
+        if (unbinder != null) {
+            unbinder.unbind();
+        }
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if (mPresenter != null) mPresenter.detachView();
-        this.mPresenter = null;
-        this.mView = null;
+        if (mPresenter != null) {
+            mPresenter.detachView();
+        }
     }
+
 
     protected abstract int getLayout();
 

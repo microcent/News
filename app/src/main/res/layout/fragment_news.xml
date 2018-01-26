@@ -2,8 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/container_background"
-    tools:context="cn.com.microcent.news.ui.widget.RatioImageView$NewsFragment">
+    android:background="@color/container_background">
 
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/swipe_refresh_layout"
@@ -16,5 +15,18 @@
             android:layout_height="match_parent"
             android:background="@color/container_background" />
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <TextView
+        android:id="@+id/tv_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:drawablePadding="@dimen/item_margin"
+        android:drawableTop="@drawable/ic_news_empty"
+        android:gravity="center"
+        android:text="@string/retry_refresh_news"
+        android:textColor="@color/secondary_text"
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </FrameLayout>

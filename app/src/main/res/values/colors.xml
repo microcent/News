@@ -14,6 +14,8 @@
 
     <color name="image_place_holder">#DFDFDF</color>
 
+    <color name="secondary_text">#8a000000</color>
+
     <!-- Primary & accent colors -->
 
     <color name="material_red_100">#fff4c7c3</color>

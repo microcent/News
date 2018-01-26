@@ -13,6 +13,8 @@ import android.widget.TextView;
 
 import com.blankj.utilcode.util.ScreenUtils;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -56,9 +58,11 @@ public class PhotoAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        Glide
-                .with(App.getInstance().getApplicationContext())
-                .load(list.get(position))
+        Glide.with(app.getApplicationContext()).load(list.get(position)).asBitmap() // gif格式有时会导致整体图片不显示，貌似有冲突
+                .format(DecodeFormat.PREFER_ARGB_8888)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.color.image_place_holder)
+                .error(R.drawable.ic_load_fail)
                 .into(((ItemViewHolder) holder).ivPhoto);
     }
 

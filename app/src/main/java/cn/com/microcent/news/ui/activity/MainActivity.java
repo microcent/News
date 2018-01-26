@@ -45,6 +45,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
     @BindView(R.id.tabs)
     TabLayout tabs;
 
+    private List<String> channelNames = new ArrayList<>();
+    private List<Fragment> fragments = new ArrayList<>();
+
+    private String currentChannelName;
+
     @Override
     protected int getLayout() {
         return R.layout.activity_main;
@@ -104,10 +109,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
     private void initViewPager() {
         List<Channel> channels = new ArrayList<>();
-        channels.add(new Channel(1, "Sport", 0));
-        channels.add(new Channel(2, "News", 1));
-        List<String> channelNames = new ArrayList<>();
-        List<Fragment> fragments = new ArrayList<>();
+        channels.add(new Channel(1, "新闻", 0));
+        channels.add(new Channel(2, "体育", 1));
+        channels.add(new Channel(3, "娱乐", 2));
+        channelNames.clear();
+        fragments.clear();
         channels.forEach(m -> {
             channelNames.add(m.getChannelName());
             NewsFragment fragment = new NewsFragment();
@@ -127,7 +133,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
             @Override
             public void onPageSelected(int position) {
-
+                currentChannelName = channelNames.get(position);
             }
 
             @Override
@@ -135,6 +141,20 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
 
             }
         });
+
+        viewPager.setCurrentItem(getCurrentViewPagerPosition());
+    }
+
+    private int getCurrentViewPagerPosition() {
+        int position = 0;
+        if (currentChannelName != null) {
+            for (int i = 0; i < channelNames.size(); i++) {
+                if (currentChannelName.equals(channelNames.get(i))) {
+                    position = i;
+                }
+            }
+        }
+        return position;
     }
 
     @Override

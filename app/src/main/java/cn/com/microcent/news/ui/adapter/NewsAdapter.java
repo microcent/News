@@ -25,12 +25,15 @@ import cn.com.microcent.news.R;
 import cn.com.microcent.news.app.App;
 import cn.com.microcent.news.model.News;
 import cn.com.microcent.news.ui.widget.RatioImageView;
+import cn.com.microcent.news.util.DateUtil;
+import lombok.Getter;
 import lombok.Setter;
 
 /**
  * Created by Administrator on 2018/1/24.
  */
 
+@Getter
 @Setter
 public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -62,7 +65,7 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         String photo = news.getPhoto();
         String title = news.getTitle();
         String digest = news.getDigest();
-        String time = news.getTime();
+        String time = DateUtil.formatDateTime(news.getTime());
         Glide.with(app.getApplicationContext()).load(photo).asBitmap() // gif格式有时会导致整体图片不显示，貌似有冲突
                 .format(DecodeFormat.PREFER_ARGB_8888)
                 .diskCacheStrategy(DiskCacheStrategy.ALL)
