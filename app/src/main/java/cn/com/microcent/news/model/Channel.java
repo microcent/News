@@ -1,4 +1,4 @@
-package cn.com.microcent.news;
+package cn.com.microcent.news.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

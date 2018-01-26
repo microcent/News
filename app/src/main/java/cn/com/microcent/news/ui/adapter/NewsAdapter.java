@@ -4,9 +4,13 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.blankj.utilcode.util.ObjectUtils;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.DecodeFormat;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -18,6 +22,9 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import cn.com.microcent.news.R;
+import cn.com.microcent.news.app.App;
+import cn.com.microcent.news.model.News;
+import cn.com.microcent.news.ui.widget.RatioImageView;
 import lombok.Setter;
 
 /**
@@ -27,14 +34,17 @@ import lombok.Setter;
 @Setter
 public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    protected List<String> list;
+    protected List<News> list;
+
+    @Inject
+    App app;
 
     @Inject
     public NewsAdapter() {
         super();
     }
 
-    public NewsAdapter(List<String> list) {
+    public NewsAdapter(List<News> list) {
         this.list = list;
     }
 
@@ -48,8 +58,20 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         ItemViewHolder item = (ItemViewHolder) holder;
-        String title = list.get(position);
-        item.title.setText(title);
+        News news = list.get(position);
+        String photo = news.getPhoto();
+        String title = news.getTitle();
+        String digest = news.getDigest();
+        String time = news.getTime();
+        Glide.with(app.getApplicationContext()).load(photo).asBitmap() // gif格式有时会导致整体图片不显示，貌似有冲突
+                .format(DecodeFormat.PREFER_ARGB_8888)
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                .placeholder(R.color.image_place_holder)
+                .error(R.drawable.ic_load_fail)
+                .into(item.ivPhoto);
+        item.tvTitle.setText(title);
+        item.tvDigest.setText(digest);
+        item.tvTime.setText(time);
     }
 
     @Override
@@ -58,8 +80,14 @@ public class NewsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     class ItemViewHolder extends RecyclerView.ViewHolder {
-        @BindView(R.id.tv_title)
-        TextView title;
+        @BindView(R.id.iv_news_photo)
+        ImageView ivPhoto;
+        @BindView(R.id.tv_news_title)
+        TextView tvTitle;
+        @BindView(R.id.tv_news_digest)
+        TextView tvDigest;
+        @BindView(R.id.tv_news_time)
+        TextView tvTime;
 
         public ItemViewHolder(View view) {
             super(view);

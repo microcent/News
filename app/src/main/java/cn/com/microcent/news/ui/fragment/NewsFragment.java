@@ -17,6 +17,7 @@ import javax.inject.Inject;
 import butterknife.BindView;
 import cn.com.microcent.news.R;
 import cn.com.microcent.news.app.App;
+import cn.com.microcent.news.model.News;
 import cn.com.microcent.news.ui.adapter.NewsAdapter;
 import cn.com.microcent.news.ui.base.BaseFragment;
 import cn.com.microcent.news.ui.contract.NewsContract;
@@ -29,7 +30,7 @@ import cn.com.microcent.news.ui.presenter.NewsPresenter;
 public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsContract.View {
 
     @BindView(R.id.swipe_refresh_layout)
-    SwipeRefreshLayout  swipeRefreshLayout;
+    SwipeRefreshLayout swipeRefreshLayout;
     @BindView(R.id.rv_news)
     RecyclerView rvNews;
 
@@ -38,6 +39,8 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
 
     @Inject
     NewsAdapter newsAdapter;
+
+    private int channelId;
 
     public NewsFragment() {
         // Required empty public constructor
@@ -60,16 +63,25 @@ public class NewsFragment extends BaseFragment<NewsPresenter> implements NewsCon
         rvNews.setItemAnimator(new DefaultItemAnimator());
         rvNews.setAdapter(newsAdapter);
 
+        if (getArguments() != null) {
+            channelId = getArguments().getInt("CHANNEL_ID");
+        }
+
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                mPresenter.load();
+                mPresenter.load(channelId);
             }
         });
     }
 
     @Override
-    public void loadSuccess(List<String> list) {
+    protected void initData() {
+        mPresenter.load(channelId);
+    }
+
+    @Override
+    public void loadSuccess(List<News> list) {
         newsAdapter.setList(list);
         newsAdapter.notifyDataSetChanged();
         swipeRefreshLayout.setRefreshing(false);

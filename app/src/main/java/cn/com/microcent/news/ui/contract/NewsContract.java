@@ -2,6 +2,7 @@ package cn.com.microcent.news.ui.contract;
 
 import java.util.List;
 
+import cn.com.microcent.news.model.News;
 import cn.com.microcent.news.ui.base.IPresenter;
 import cn.com.microcent.news.ui.base.IView;
 
@@ -11,10 +12,10 @@ import cn.com.microcent.news.ui.base.IView;
 
 public interface NewsContract {
     interface View extends IView {
-        void loadSuccess(List<String> list);
+        void loadSuccess(List<News> list);
     }
 
     interface Presenter extends IPresenter<View> {
-        void load();
+        void load(int channelId);
     }
 }

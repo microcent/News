@@ -7,6 +7,7 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
@@ -40,6 +41,8 @@ public class PhotoActivity extends BaseActivity<PhotoPresenter> implements Photo
     NavigationView navigationView;
     @BindView(R.id.rv_photo)
     RecyclerView rvPhoto;
+    @BindView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout swipeRefreshLayout;
 
     @Inject
     PhotoAdapter photoAdapter;
@@ -92,6 +95,13 @@ public class PhotoActivity extends BaseActivity<PhotoPresenter> implements Photo
             }
         });
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPresenter.load();
+            }
+        });
+
         rvPhoto.setHasFixedSize(true);
         rvPhoto.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         rvPhoto.setItemAnimator(new DefaultItemAnimator());
@@ -108,6 +118,7 @@ public class PhotoActivity extends BaseActivity<PhotoPresenter> implements Photo
     public void loadSuccess(List<String> list) {
         photoAdapter.setList(list);
         photoAdapter.notifyDataSetChanged();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
     @Override

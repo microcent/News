@@ -52,6 +52,7 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
             if (mPresenter != null)
                 mPresenter.attachView(this);
             initView(mView);
+            initData();
         }
         ViewGroup parent = (ViewGroup) mView.getParent();
         if (parent != null) {
@@ -86,6 +87,8 @@ public abstract class BaseFragment<P extends IPresenter> extends Fragment implem
     protected abstract void setInject();
 
     protected abstract void initView(View view);
+
+    protected abstract void initData();
 
     public FragmentComponent getFragmentComponent() {
         return DaggerFragmentComponent.builder()

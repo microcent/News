@@ -12,6 +12,8 @@
 
     <color name="white">#FFFFFFFF</color>
 
+    <color name="image_place_holder">#DFDFDF</color>
+
     <!-- Primary & accent colors -->
 
     <color name="material_red_100">#fff4c7c3</color>

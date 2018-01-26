@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
-import cn.com.microcent.news.Channel;
+import cn.com.microcent.news.model.Channel;
 import cn.com.microcent.news.R;
 import cn.com.microcent.news.ui.adapter.NewsFragmentPagerAdapter;
 import cn.com.microcent.news.ui.base.BaseActivity;
@@ -108,11 +108,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainCon
         channels.add(new Channel(2, "News", 1));
         List<String> channelNames = new ArrayList<>();
         List<Fragment> fragments = new ArrayList<>();
-        channels.forEach(m->{
+        channels.forEach(m -> {
             channelNames.add(m.getChannelName());
             NewsFragment fragment = new NewsFragment();
             Bundle bundle = new Bundle();
-            bundle.putInt("CHANNEL_POSITION", 0);
+            bundle.putInt("CHANNEL_ID", m.getChannelId());
             fragment.setArguments(bundle);
             fragments.add(fragment);
         });
